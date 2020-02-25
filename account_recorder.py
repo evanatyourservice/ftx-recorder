@@ -201,22 +201,22 @@ def recorder():
         try:
             get_account(client)
         except Exception as e:
-            logger.error(f"account error: {e}")
+            logger.exception(f"account error: {e}")
             pass
         try:
             get_balances(client)
         except Exception as e:
-            logger.error(f"Balances error: {e}")
+            logger.exception(f"Balances error: {e}")
             pass
         try:
             get_orders(client, first)
         except Exception as e:
-            logger.error(f"Orders error: {e}")
+            logger.exception(f"Orders error: {e}")
             pass
         try:
             get_fills(client, first)
         except Exception as e:
-            logger.error(f"fills error: {e}")
+            logger.exception(f"fills error: {e}")
             pass
         first = False
         time.sleep(0.5)
@@ -228,5 +228,5 @@ if __name__ == "__main__":
         try:
             recorder()
         except Exception as e:
-            logger.error(f"Main error {e}")
+            logger.exception(f"Main error {e}")
             continue
