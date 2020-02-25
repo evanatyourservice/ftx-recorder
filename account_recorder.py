@@ -71,8 +71,8 @@ def get_account(client):
                 },
                 "time": t,
             } for p in positions]
-            for p in positions_write:
-                p["fields"] = {k: float(v) for k, v in p["fields"].items() if v is not None}
+            for di in positions_write:
+                di["fields"] = {k: float(v) for k, v in di["fields"].items() if v is not None}
             client.write_points(positions_write)
 
             all_positions_write = {
@@ -81,11 +81,9 @@ def get_account(client):
                     "totalCollateralUsed": sum([p["collateralUsed"] for p in positions]),
                     "totalCost": sum([p["cost"] for p in positions]),
                     "totalRealizedPnl": sum([p["realizedPnl"] for p in positions]),
-                    "totalUnrealizedPnl": sum([p["unrealizedPnl"] for p in positions]),
                 },
                 "time": t,
             }
-            all_positions_write["fields"] = {k: float(v) for k, v in all_positions_write["fields"].items() if v is not None}
             client.write_points([positions_write])
 
 
