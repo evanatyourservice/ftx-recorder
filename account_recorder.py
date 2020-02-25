@@ -2,7 +2,6 @@ import time
 from datetime import datetime
 import logging
 from influxdb import InfluxDBClient
-from influxdb.exceptions import InfluxDBClientError
 
 from config import *
 
@@ -27,7 +26,6 @@ def get_account(client):
         logger.error(f"Could not get account with error: {e}")
         raise e
     else:
-        logger.info("Writing account.")
         t = datetime.utcnow().isoformat()
         account = account["result"]
         positions = account["positions"]
@@ -40,10 +38,13 @@ def get_account(client):
             "fields": {
                 "collateral": account["collateral"],
                 "freeCollateral": account["freeCollateral"],
+                "percentUsedCollateral": (account["collateral"] - account["freeCollateral"]) / account["collateral"],
+                "percentFreeCollateral": account["freeCollateral"] / account["collateral"],
                 "marginFraction": account["marginFraction"],
                 "openMarginFraction": account["openMarginFraction"],
                 "totalAccountValue": account["totalAccountValue"],
                 "totalPositionSize": account["totalPositionSize"],
+                "currentLeverage": account["totalPositionSize"] / account["collateral"],
             },
             "time": t,
         }
@@ -51,7 +52,6 @@ def get_account(client):
         client.write_points([account_write])
 
         if positions:
-            logger.info("Writing positions.")
             positions_write = [{
                 "measurement": "positions",
                 "tags": {
@@ -75,6 +75,19 @@ def get_account(client):
                 p["fields"] = {k: float(v) for k, v in p["fields"].items() if v is not None}
             client.write_points(positions_write)
 
+            all_positions_write = {
+                "measurement": "all_positions",
+                "fields": {
+                    "totalCollateralUsed": sum([p["collateralUsed"] for p in positions]),
+                    "totalCost": sum([p["cost"] for p in positions]),
+                    "totalRealizedPnl": sum([p["realizedPnl"] for p in positions]),
+                    "totalUnrealizedPnl": sum([p["unrealizedPnl"] for p in positions]),
+                },
+                "time": t,
+            }
+            all_positions_write["fields"] = {k: float(v) for k, v in all_positions_write["fields"].items() if v is not None}
+            client.write_points([positions_write])
+
 
 def get_balances(client):
     try:
@@ -83,7 +96,6 @@ def get_balances(client):
         logger.error(f"Could not get balances with error: {e}")
         raise e
     else:
-        logger.info("Writing balances.")
         t = datetime.utcnow().isoformat()
         balances = balances["info"]["result"]
 
@@ -114,7 +126,6 @@ def get_orders(client, first=False):
         logger.error(f"Could not get order history with error: {e}")
         raise e
     else:
-        logger.info("Writing orders.")
         orders = orders["result"]
 
         if orders:
@@ -155,7 +166,6 @@ def get_fills(client, first=False):
         logger.error(f"Could not get fills history with error: {e}")
         raise e
     else:
-        logger.info("Writing fills.")
         fills = fills["result"]
 
         if fills:
@@ -186,26 +196,6 @@ def recorder():
     client = InfluxDBClient(
         host="localhost", port=8086, database="accountdb"
     )
-
-    if drop_db:
-        logger.info("Deleting existing account database.")
-        try:
-            client.drop_database("accountdb")
-        except InfluxDBClientError:
-            logger.info("No existing account database.")
-            client.create_database("accountdb")
-        else:
-            logger.info("Deleted existing account database.")
-            client.create_database("accountdb")
-        finally:
-            logger.info("Created new account database.")
-    else:
-        try:
-            client.create_database("accountdb")
-        except InfluxDBClientError:
-            logger.info("Using existing account database.")
-        else:
-            logger.info("Created new account database.")
 
     first = True
 
