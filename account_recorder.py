@@ -242,7 +242,7 @@ def recorder():
             logger.exception(f"fills error: {e}")
             pass
         first = False
-        time.sleep(0.5)
+        time.sleep(1.0)
 
 
 if __name__ == "__main__":
