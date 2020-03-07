@@ -19,8 +19,6 @@ Environment=PYTHONUNBUFFERED=1
 
 Restart=always
 
-RestartSec=2
-
 User=ec2-user
 
 
