@@ -12,4 +12,4 @@ _ = Exchange.load_markets()
 
 PAIRS = Exchange.symbols
 PAIRS = [pair for pair in PAIRS if pair.endswith("PERP")]
-PAIRS += ["ETH/BTC", "ETH/USD", "BTC/USD"]
+PAIRS += ["ETH-BTC", "ETH-USD", "BTC-USD"]
