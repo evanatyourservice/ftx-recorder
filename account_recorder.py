@@ -216,7 +216,7 @@ def get_fills(client, first=False):
 
 
 def recorder():
-    client = InfluxDBClient(host="localhost", port=8086, database="accountdb")
+    client = InfluxDBClient(host="localhost", port=8086, database="account")
 
     first = True
 

@@ -8,7 +8,7 @@ from config import *
 
 def main():
     f = FeedHandler()
-    trade_influx = TradeInflux('http://localhost:8086', 'tradesdb', create_db=True, numeric_type=float)
+    trade_influx = TradeInflux('http://localhost:8086', 'trades', numeric_type=float)
     f.add_feed(FTX(channels=[TRADES], pairs=PAIRS, callbacks={TRADES: trade_influx}), timeout=120)
     f.run()
 
