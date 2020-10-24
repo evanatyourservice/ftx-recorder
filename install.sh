@@ -11,7 +11,7 @@ sudo systemctl daemon-reload
 sudo systemctl start influxdb
 echo "influxdb started"
 
-# bitmex recorder
+# trades recorder
 echo "Installing trades recorder"
 sudo yum install -y python3 python3-pip
 sudo -H pip3 install -U pip
