@@ -2,8 +2,9 @@ import time
 from datetime import datetime
 import logging
 from influxdb import InfluxDBClient
+import ccxt
 
-from config import *
+from config import Exchange
 
 
 formatter = logging.Formatter(
@@ -17,8 +18,6 @@ stream_handler.setLevel(logging.INFO)
 logger = logging.getLogger("account_recorder")
 logger.setLevel(logging.INFO)
 logger.addHandler(stream_handler)
-
-_ = Exchange.load_markets()
 
 
 def get_account(client):
@@ -249,6 +248,7 @@ def recorder():
 
 if __name__ == "__main__":
     logger.info("Starting account recorder.")
+    _ = Exchange.load_markets()
     while True:
         try:
             recorder()
