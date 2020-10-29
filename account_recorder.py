@@ -18,6 +18,8 @@ logger = logging.getLogger("account_recorder")
 logger.setLevel(logging.INFO)
 logger.addHandler(stream_handler)
 
+_ = Exchange.load_markets()
+
 
 def get_account(client):
     try:

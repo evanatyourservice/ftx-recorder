@@ -3,7 +3,14 @@ from cryptofeed import FeedHandler
 from cryptofeed.exchanges import FTX
 from cryptofeed.defines import TRADES
 
-from config import *
+from config import Exchange
+
+
+_ = Exchange.load_markets()
+
+PAIRS = Exchange.symbols
+PAIRS = [pair for pair in PAIRS if pair.endswith("PERP")]
+PAIRS += ["ETH-BTC", "ETH-USD", "BTC-USD"]
 
 
 def main():
