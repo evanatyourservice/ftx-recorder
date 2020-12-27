@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     pairs = Exchange.symbols
     pairs = [pair for pair in pairs if pair.endswith("PERP")]
-    pairs += ["ETH-BTC", "ETH-USD", "BTC-USD"]
+    pairs += ["ETH-BTC", "ETH-USD", "BTC-USD", "FTT-USD", "SRM-USD"]
 
     while True:
         try:
